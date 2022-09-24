@@ -206,7 +206,7 @@ class SequentialGaussian_SharedPQ:
         for i, j in zip(self.g1.shape, self.g2.shape):
             if i != j: break
             shared_dims += 1
-        assert shared_dims is not 0  # need at least one shared dim between the Gaussians
+        assert shared_dims != 0  # need at least one shared dim between the Gaussians
         self.shared_dims = shared_dims
 
 
@@ -239,10 +239,3 @@ def mc_kl_divergence(p, q, n_samples=1):
     """Computes monte-carlo estimate of KL divergence. n_samples: how many samples are used for the estimate."""
     samples = [p.sample() for _ in range(n_samples)]
     return torch.stack([p.log_prob(x) - q.log_prob(x) for x in samples], dim=1).mean(dim=1)
-
-
-if __name__ == "__main__":
-    d = [Gaussian(torch.tensor([1., 1]), torch.zeros(2)), Gaussian(torch.tensor([-1., -1]), torch.zeros(2))]
-    d_avg = Gaussian.average(d)
-    print(d_avg.mu, d_avg.sigma)
-

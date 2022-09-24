@@ -30,6 +30,7 @@ WANDB_ENTITY_NAME = 'your_entity_name'
 class ModelTrainer(BaseTrainer):
     def __init__(self, args):
         self.args = args
+        import ipdb; ipdb.set_trace()
         self.setup_device()
 
         # set up params
@@ -344,7 +345,7 @@ class ModelTrainer(BaseTrainer):
         return
 
     def get_exp_dir(self):
-        return os.environ['EXP_DIR']
+        return "/home/yuchen/spirl/experiments"
 
     @property
     def log_images_now(self):
@@ -362,7 +363,7 @@ def save_checkpoint(state, folder, filename='checkpoint.pth'):
 
 
 def get_exp_dir():
-    return os.environ['EXP_DIR']
+    return "/home/yuchen/spirl/experiments"
 
 
 def datetime_str():

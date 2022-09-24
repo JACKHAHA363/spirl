@@ -30,12 +30,10 @@ WANDB_ENTITY_NAME = 'your_entity_name'
 class ModelTrainer(BaseTrainer):
     def __init__(self, args):
         self.args = args
-        import ipdb; ipdb.set_trace()
         self.setup_device()
 
         # set up params
         self.conf = conf = self.get_config()
-
         self._hp = self._default_hparams()
         self._hp.overwrite(conf.general)  # override defaults with config file
         self._hp.exp_path = make_path(conf.exp_dir, args.path, args.prefix, args.new_dir)
@@ -99,7 +97,7 @@ class ModelTrainer(BaseTrainer):
             'adam_beta': 0.9,       # beta1 param in Adam
             'top_of_n_eval': 1,     # number of samples used at eval time
             'top_comp_metric': None,    # metric that is used for comparison at eval time (e.g. 'mse')
-            'logging_target': 'wandb',
+            'logging_target': 'notwandb',
         })
         return default_dict
     
@@ -160,7 +158,7 @@ class ModelTrainer(BaseTrainer):
             end = time.time()
             
             if self.log_outputs_now:
-                print('GPU {}: {}'.format(os.environ["CUDA_VISIBLE_DEVICES"] if self.use_cuda else 'none',
+                print('GPU {}: {}'.format(0,
                                           self._hp.exp_path))
                 print(('itr: {} Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                         self.global_step, epoch, self.batch_idx, len(self.train_loader),
@@ -245,8 +243,7 @@ class ModelTrainer(BaseTrainer):
         return conf
 
     def postprocess_conf(self, conf):
-        conf.model['batch_size'] = self._hp.batch_size if not torch.cuda.is_available() \
-            else int(self._hp.batch_size / torch.cuda.device_count())
+        conf.model['batch_size'] = self._hp.batch_size
         conf.model.update(conf.data.dataset_spec)
         conf.model['device'] = conf.data['device'] = self.device.type
         return conf

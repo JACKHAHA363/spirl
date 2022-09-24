@@ -64,6 +64,7 @@ class D4RLSequenceSplitDataset(Dataset):
         else:
             self.start = int((self.SPLIT.train + self.SPLIT.val) * self.n_seqs)
             self.end = self.n_seqs
+        print('#### Average seq length', np.mean([len(seq['states']) for seq in self.seqs]))
 
     def __getitem__(self, index):
         # sample start index in data range

@@ -67,7 +67,7 @@ ll_agent_config = copy.deepcopy(base_agent_params)
 ll_agent_config.update(AttrDict(
     model=SkillPriorMdl,
     model_params=ll_model_params,
-    model_checkpoint=os.path.join(os.environ["EXP_DIR"],
+    model_checkpoint=os.path.join("/home/yuchen/spirl/experiments",
                                   "skill_prior_learning/kitchen/hierarchical"),
 ))
 

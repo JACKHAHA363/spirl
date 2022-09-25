@@ -9,8 +9,8 @@ ll_model_params.cond_decode = True
 ll_policy_params = AttrDict(
     policy_model=ClSPiRLMdl,
     policy_model_params=ll_model_params,
-    policy_model_checkpoint=os.path.join(os.environ["EXP_DIR"],
-                                         "skill_prior_learning/kitchen/hierarchical_cl"),
+    policy_model_checkpoint=os.path.join("/home/yuchen/spirl/experiments",
+                                         "skill_prior_learning/kitchen/hierarchical_cl/repro"),
 )
 ll_policy_params.update(ll_model_params)
 

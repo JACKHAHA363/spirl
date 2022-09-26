@@ -5,6 +5,8 @@ import json
 from tqdm import tqdm
 from collections import defaultdict
 
+
+from tensorboardX import SummaryWriter
 from spirl.rl.components.params import get_args
 from spirl.train import set_seeds, make_path, datetime_str, save_config, get_exp_dir, save_checkpoint
 from spirl.components.checkpointer import CheckpointHandler, save_cmd, save_git, get_config_path
@@ -16,7 +18,7 @@ from spirl.rl.components.sampler import Sampler
 from spirl.rl.components.replay_buffer import RolloutStorage
 
 WANDB_PROJECT_NAME = 'spirl'
-WANDB_ENTITY_NAME = 'rl'
+WANDB_ENTITY_NAME = 'luyuchen'
 
 
 class RLTrainer:
@@ -93,13 +95,21 @@ class RLTrainer:
             'n_steps_per_epoch': 20000,       # number of env steps per epoch
             'log_output_per_epoch': 100,  # log the non-image/video outputs N times per epoch
             'log_images_per_epoch': 4,    # log images/videos N times per epoch
-            'logging_target': 'wandb',    # where to log results to
+            'logging_target': 'notwandb',    # where to log results to
             'n_warmup_steps': 0,    # steps of warmup experience collection before training
         })
         return default_dict
 
     def train(self, start_epoch):
         """Run outer training loop."""
+        if not self.args.dont_save and self.is_chef:
+            save_checkpoint({
+                'epoch': -1,
+                'global_step': self.global_step,
+                'state_dict': self.agent.state_dict(),
+            }, os.path.join(self._hp.exp_path, 'weights'), CheckpointHandler.get_ckpt_name("init"))
+            self.agent.save_state(self._hp.exp_path)
+        exit()   # Just the save the initialized policy
         if self._hp.n_warmup_steps > 0:
             self.warmup()
 
@@ -268,7 +278,7 @@ class RLTrainer:
                     logger = WandBLogger(exp_name, WANDB_PROJECT_NAME, entity=WANDB_ENTITY_NAME,
                                          path=self._hp.exp_path, conf=conf)
                 else:
-                    raise NotImplementedError   # TODO implement alternative logging (e.g. TB)
+                    logger = SummaryWriter(log_dir)
             return logger
 
     def setup_device(self):

@@ -109,7 +109,7 @@ class RLTrainer:
                 'state_dict': self.agent.state_dict(),
             }, os.path.join(self._hp.exp_path, 'weights'), CheckpointHandler.get_ckpt_name("init"))
             self.agent.save_state(self._hp.exp_path)
-        exit()   # Just the save the initialized policy
+
         if self._hp.n_warmup_steps > 0:
             self.warmup()
 
